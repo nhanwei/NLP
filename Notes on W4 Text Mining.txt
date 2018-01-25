@@ -1,0 +1,86 @@
+# 1. Semantic Text Similiarity
+# using wordnet
+import nltk
+from nltk.corpus import wordnet as wn
+
+deer = wn.synset('deer.n.01') #noun meaning of deer (n)  and first meaning of it (01)
+elk = wn.synset('elk.n.01')
+
+# path similarity
+deer.path_similarity(elk) #0.5
+deer.path_similarity(horse)  #0.14286
+
+# Lin similiarity
+from nltk.corpus import wordnet_ic
+brown_ic = wordnet_ic.ic('ic-brown.dat')
+deer.lin_similiarity(elk, brown_ic)
+deer.lin_similiarity(horse, brown_ic)
+
+# Collocation and distributional similarity:
+## Two words that frequently appears in similar context are more semantically related.
+# Context:
+## Words before, after, within a small window
+## Parts of speech of words before, after, in a small window
+## Specific syntactic relation to the target wordnet
+## Words in the same sentence or document
+# Strength of association between words
+## how frequent is the collocation (of two words)
+## Pointwise Mutual Information (PMI)
+import nltk.collocations import *
+bigram_measures = nltk.collocations.BigramAssocMeasures()
+finder = BigramCollocationFinder.from_words(text)
+finder.nbest(bigram_measures.pmi, 10) # find top 10 pairs
+
+finder.apply_freq_filter(10) # filter out pairs that does not occur at least 10 times
+
+# 2. Topic Modelling
+## Documents and words clustering problem. 
+
+# 3. Generative Models and Latent Dirichlet Allocation
+# Unique model: One topic to generate the document
+# Mixture model: Multiple topics to generate the document
+
+# LDA packages: gensim ,lda
+# First, you need to pre-processing text
+## Tokenize, normalize (lowercase), stop word removal, stemming
+# Then, document to document-term matrix (!!)
+# Then build LDA model on this matrix
+
+import gensim 
+from gensim import corpora, models
+# dictionary: mapping between IDs and words
+dictionary = corpora.Dictionary(doc_set)  # doc_set: set of pre-processed text doc
+# doc to bag of words
+corpus = [dictionary.doc2bow(doc) for doc in doc_set]
+# specify the num of topics
+ldamodel = gensim.models.ldamodel.LdaModel(corpus, num_topics =4, id2word=dictionary, passes = 50)
+print(ldamodel.print_topics(num_topics=4, num_words=5))
+
+# 4. Information Extraction
+# How to convert unstructured text to structured form
+# Goal: ID and extract fields of interest from free text
+
+# Approaches to ID named entities 
+## Depends on kinds of entities that need to be ID
+## Regex for well-formatted fields like date and phone numbers
+## For other fields: ML approach
+
+# Standard Named-Entity Recognition (NER) task
+## Typically four-class model: 
+### Person (PER), 
+### Organisation (ORG), 
+### Location/geo-political entities (LOC/GPE),
+### Other / Outside (any other class)
+
+# After NER task, then Relation Extraction
+# Anita received a rose from John. 
+# Who gave Anita a rose?
+
+
+
+
+
+
+
+
+
